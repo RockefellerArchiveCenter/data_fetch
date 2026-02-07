@@ -1,0 +1,6 @@
+*.DS_Store
+.archivessnake.yml
+*.pickle
+.coverage
+.tox
+__pycache__/
