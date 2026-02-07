@@ -1,0 +1,5 @@
+ArchivesSnake~=0.10
+aws-assume-role-lib~=2.10
+boto3~=1.42
+ElectronBonder~=1.1
+shortuuid~=1.0
