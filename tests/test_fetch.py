@@ -364,7 +364,7 @@ class DataFetcherMethodTests(TestCase):
         mock_failure_message.assert_called_once()
         mock_set_is_running.assert_has_calls(
             [call(self.fetcher.object_status, self.fetcher.object_type), call(self.fetcher.object_status, self.fetcher.object_type, status=False)])
-        mock_set_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type, ANY)
+        mock_set_last_run_time.assert_not_called()
 
     @mock_aws
     def test_get_last_run_time(self):

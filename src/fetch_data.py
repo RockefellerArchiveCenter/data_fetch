@@ -80,10 +80,10 @@ class DataFetcher:
                     for to_delete in fetched_ids:
                         self.send_delete_request(to_delete)
                 self.send_success_message()
+                self.set_last_run_time(self.object_status, self.object_type, start_time)
             except Exception as e:
                 self.send_failure_message(e)
             self.set_is_running(self.object_status, self.object_type, status=False)
-            self.set_last_run_time(self.object_status, self.object_type, start_time)
 
     def get_client_with_role(self, resource, role_arn):
         """Gets Boto3 client which authenticates with a specific IAM role."""

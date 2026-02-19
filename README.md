@@ -16,10 +16,22 @@ If you have [git](https://git-scm.com/) and [Docker](https://store.docker.com/se
 ## Service Flow
 
 The service processes packages as follows:
-
+- Marks the service instance as running
+- Instantiates the necessary client for the desired data source
+- If fetching updated objects, the service:
+    - Fetches identifiers for all objects that been updated
+    - Fetches data for updated objects
+    - The data is sent to an SNS topic with an indication of whether the data should be indexed or removed from the index
+- If fetching deleted objects, the service:
+    - Fetches identifiers for all objects that been deleted
+    - Sends the identifier to an SNS topic, indicating that it should be deleted from the index
+- Sends a success message to an SNS topic
+- Updates the last run time of the service
+- Marks the service instance as not running
 
 If errors are encountered during any of the above steps, the service:
-
+- Sends a failure message to an SNS topic
+- Marks service instance as not running
 
 
 ## Usage
