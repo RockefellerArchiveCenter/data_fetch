@@ -440,14 +440,19 @@ class DataFetcherMethodTests(TestCase):
         self.assertEqual(message_body['Message'], json.dumps({"uri": "12345"}))
         self.assertEqual(
             message_body['MessageAttributes'],
-            {'service': {
-                'Type': 'String',
-                'Value': self.fetcher.service_name,
-            },
+            {
+                'service': {
+                    'Type': 'String',
+                    'Value': self.fetcher.service_name,
+                },
                 'requested_action': {
-                'Type': 'String',
-                'Value': 'merge',
-            }})
+                    'Type': 'String',
+                    'Value': 'merge',
+                },
+                'object_type': {
+                    'Type': 'String',
+                    'Value': self.fetcher.object_type,
+                }})
 
     @mock_aws
     def test_send_delete_request(self):
@@ -458,14 +463,23 @@ class DataFetcherMethodTests(TestCase):
         self.assertEqual(message_body['Message'], '3aai9usY3AZzCSFkB3RSQ9')
         self.assertEqual(
             message_body['MessageAttributes'],
-            {'service': {
-                'Type': 'String',
-                'Value': self.fetcher.service_name,
-            },
+            {
+                'service': {
+                    'Type': 'String',
+                    'Value': self.fetcher.service_name,
+                },
                 'requested_action': {
-                'Type': 'String',
-                'Value': 'delete',
-            }})
+                    'Type': 'String',
+                    'Value': 'delete',
+                },
+                'es_id': {
+                    'Type': 'String',
+                    'Value': '3aai9usY3AZzCSFkB3RSQ9',
+                },
+                'object_type': {
+                    'Type': 'String',
+                    'Value': self.fetcher.object_type,
+                }})
 
     @mock_aws
     def test_send_success_message(self):

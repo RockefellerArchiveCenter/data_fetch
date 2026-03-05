@@ -202,6 +202,10 @@ class DataFetcher:
                 'requested_action': {
                     'DataType': 'String',
                     'StringValue': 'merge',
+                },
+                'object_type': {
+                    'DataType': 'String',
+                    'StringValue': self.object_type,
                 }
             })
 
@@ -209,6 +213,7 @@ class DataFetcher:
         """Sends delete request to SNS topic."""
         client = self.get_client_with_role('sns', self.sns_role_arn)
         es_id = get_es_id(data)
+
         client.publish(
             TopicArn=self.sns_topic,
             MessageGroupId=f'{self.service_name}-{es_id}',
@@ -222,6 +227,14 @@ class DataFetcher:
                 'requested_action': {
                     'DataType': 'String',
                     'StringValue': 'delete',
+                },
+                'es_id': {
+                    'DataType': 'String',
+                    'StringValue': es_id,
+                },
+                'object_type': {
+                    'DataType': 'String',
+                    'StringValue': self.object_type,
                 }
             })
 
