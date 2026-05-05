@@ -51,7 +51,9 @@ class DataFetcher:
 
     def fetch(self):
         """Main method, which calls all other methods."""
+        logging.info(f"Checking to see if fetch for {self.object_status} {self.object_type} is already running.")
         if not self.is_running(self.object_status, self.object_type):
+            logging.info(f"Fetching {self.object_status} {self.object_type} from {self.source_system}.")
             try:
                 start_time = int(time.time())
                 self.set_is_running(self.object_status, self.object_type)
@@ -82,6 +84,7 @@ class DataFetcher:
                 self.send_success_message()
                 self.set_last_run_time(self.object_status, self.object_type, start_time)
             except Exception as e:
+                logging.error(e)
                 self.send_failure_message(e)
             self.set_is_running(self.object_status, self.object_type, status=False)
 
