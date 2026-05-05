@@ -11,6 +11,9 @@ from .clients import ArchivesSpaceClient, CartographerClient
 from .helpers import (ancestors_published, get_es_id, object_published,
                       valid_finding_aid_status, valid_id0)
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 VALID_OBJECT_STATUSES = ['updated', 'deleted']
 VALID_OBJECT_TYPES = [
     'resource',
@@ -87,6 +90,7 @@ class DataFetcher:
                 logging.error(e)
                 self.send_failure_message(e)
             self.set_is_running(self.object_status, self.object_type, status=False)
+            logging.info(f"Fetch of {self.object_status} {self.object_type} is complete.")
 
     def get_client_with_role(self, resource, role_arn):
         """Gets Boto3 client which authenticates with a specific IAM role."""
