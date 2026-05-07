@@ -331,6 +331,7 @@ class DataFetcher:
                     'StringValue': str(exception),
                 }
             })
+        logging.info('Failure message sent.')
 
 
 if __name__ == '__main__':
