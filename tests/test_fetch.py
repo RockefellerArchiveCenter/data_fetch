@@ -23,6 +23,7 @@ DEFAULT_CONFIG = {
     "AS_BASEURL": "https://as.rockarch.org/api",
     "AS_USERNAME": "admin",
     "AS_PASSWORD": "admin",
+    "AS_SESSION_TOKEN_ARCHIVAL_OBJECT_UPDATED": "secretsessiontoken",
     "AS_REPO": "2",
     "CARTOGRAPHER_BASEURL": "https://cartographer.rockarch.org",
     "CARTOGRAPHER_HEALTH_CHECK_PATH": "/status",
@@ -95,6 +96,8 @@ class DataFetcherMethodTests(TestCase):
         self.assertEqual(self.fetcher.object_status, 'updated')
         self.assertEqual(self.fetcher.object_type, 'archival_object')
         self.assertEqual(self.fetcher.config, DEFAULT_CONFIG)
+        self.assertEqual(self.fetcher.environment, 'dev')
+        self.assertEqual(self.fetcher.session_token_key, 'AS_SESSION_TOKEN_ARCHIVAL_OBJECT_UPDATED')
 
         """Test valid object types"""
         invalid_object_type = DEFAULT_ARGS.copy()
@@ -113,6 +116,7 @@ class DataFetcherMethodTests(TestCase):
     @patch('src.fetch_data.DataFetcher.is_running')
     @patch('src.fetch_data.DataFetcher.set_is_running')
     @patch('src.fetch_data.DataFetcher.get_last_run_time')
+    @patch('src.fetch_data.DataFetcher.update_session_token')
     @patch('src.fetch_data.DataFetcher.is_exportable')
     @patch('src.fetch_data.DataFetcher.send_data_to_sns')
     @patch('src.fetch_data.DataFetcher.send_delete_request')
@@ -120,6 +124,8 @@ class DataFetcherMethodTests(TestCase):
     @patch('src.fetch_data.DataFetcher.send_failure_message')
     @patch('src.fetch_data.DataFetcher.set_last_run_time')
     @patch('src.clients.ArchivesSpaceClient.__init__')
+    @patch('src.clients.ArchivesSpaceClient.log_out')
+    @patch('src.clients.ArchivesSpaceClient.get_session_token')
     @patch('src.clients.ArchivesSpaceClient.get_updated_identifiers')
     @patch('src.clients.ArchivesSpaceClient.get_deleted_identifiers')
     @patch('src.clients.ArchivesSpaceClient.resolve_identifiers')
@@ -136,6 +142,8 @@ class DataFetcherMethodTests(TestCase):
             mock_as_resolve,
             mock_as_get_deleted,
             mock_as_get_updated,
+            mock_as_session_token,
+            mock_as_log_out,
             mock_as_init,
             mock_set_last_run_time,
             mock_failure_message,
@@ -143,12 +151,14 @@ class DataFetcherMethodTests(TestCase):
             mock_delete_message,
             mock_data_to_sns,
             mock_is_exportable,
+            mock_update_session_token,
             mock_get_last_run_time,
             mock_set_is_running,
             mock_is_running):
         """Set up mocks"""
         fetched_obj = {"uri": "1234"}
         mock_as_init.return_value = None
+        mock_as_session_token.return_value = "secretsessiontoken"
         mock_as_get_updated.return_value = [fetched_obj]
         mock_as_resolve.return_value = [fetched_obj]
         mock_cartographer_init.return_value = None
@@ -162,6 +172,7 @@ class DataFetcherMethodTests(TestCase):
         self.fetcher.fetch()
         mock_set_is_running.assert_not_called()
         mock_get_last_run_time.assert_not_called()
+        mock_update_session_token.assert_not_called()
         mock_is_exportable.assert_not_called()
         mock_data_to_sns.assert_not_called()
         mock_delete_message.assert_not_called()
@@ -169,6 +180,8 @@ class DataFetcherMethodTests(TestCase):
         mock_failure_message.assert_not_called()
         mock_set_last_run_time.assert_not_called()
         mock_as_init.assert_not_called()
+        mock_as_log_out.assert_not_called()
+        mock_as_session_token.assert_not_called()
         mock_as_get_updated.assert_not_called()
         mock_as_get_deleted.assert_not_called()
         mock_as_resolve.assert_not_called()
@@ -183,17 +196,19 @@ class DataFetcherMethodTests(TestCase):
         mock_set_is_running.assert_has_calls(
             [call(self.fetcher.object_status, self.fetcher.object_type), call(self.fetcher.object_status, self.fetcher.object_type, status=False)])
         mock_get_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type)
+        mock_update_session_token.assert_called_once_with("secretsessiontoken", self.fetcher.session_token_key)
         mock_is_exportable.assert_called_once_with(fetched_obj)
         mock_data_to_sns.assert_called_once_with(fetched_obj)
         mock_delete_message.assert_not_called()
         mock_success_message.assert_called_once_with()
         mock_failure_message.assert_not_called()
         mock_set_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type, ANY)
-        mock_as_init.assert_called_once_with(
-            baseurl=self.fetcher.config['AS_BASEURL'],
-            username=self.fetcher.config['AS_USERNAME'],
-            password=self.fetcher.config['AS_PASSWORD'],
-            repo=self.fetcher.config['AS_REPO'])
+        mock_as_init.assert_has_calls([
+            call(baseurl='https://as.rockarch.org/api', session_token='secretsessiontoken', repo='2'),
+            call(baseurl='https://as.rockarch.org/api', username='admin', password='admin', repo='2')
+        ])
+        mock_as_log_out.assert_called_once()
+        mock_as_session_token.assert_called_once()
         mock_as_get_updated.assert_called_once_with(self.fetcher.object_type, 12345)
         mock_as_get_deleted.assert_not_called()
         mock_as_resolve.assert_called_once()
@@ -205,6 +220,7 @@ class DataFetcherMethodTests(TestCase):
         """Reset mocks"""
         mock_set_is_running.reset_mock()
         mock_get_last_run_time.reset_mock()
+        mock_update_session_token.reset_mock()
         mock_is_exportable.reset_mock()
         mock_data_to_sns.reset_mock()
         mock_delete_message.reset_mock()
@@ -212,6 +228,8 @@ class DataFetcherMethodTests(TestCase):
         mock_failure_message.reset_mock()
         mock_set_last_run_time.reset_mock()
         mock_as_init.reset_mock()
+        mock_as_log_out.reset_mock()
+        mock_as_session_token.reset_mock()
         mock_as_get_updated.reset_mock()
         mock_as_resolve.reset_mock()
 
@@ -221,6 +239,7 @@ class DataFetcherMethodTests(TestCase):
         mock_set_is_running.assert_has_calls(
             [call(self.fetcher.object_status, self.fetcher.object_type), call(self.fetcher.object_status, self.fetcher.object_type, status=False)])
         mock_get_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type)
+        mock_update_session_token.assert_not_called()
         mock_is_exportable.assert_called_once_with(fetched_obj)
         mock_data_to_sns.assert_called_once_with(fetched_obj)
         mock_delete_message.assert_not_called()
@@ -228,6 +247,8 @@ class DataFetcherMethodTests(TestCase):
         mock_failure_message.assert_not_called()
         mock_set_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type, ANY)
         mock_as_init.assert_not_called()
+        mock_as_log_out.assert_not_called()
+        mock_as_session_token.assert_not_called()
         mock_as_get_updated.assert_not_called()
         mock_as_get_deleted.assert_not_called()
         mock_as_resolve.assert_not_called()
@@ -246,6 +267,7 @@ class DataFetcherMethodTests(TestCase):
     @patch('src.fetch_data.DataFetcher.is_running')
     @patch('src.fetch_data.DataFetcher.set_is_running')
     @patch('src.fetch_data.DataFetcher.get_last_run_time')
+    @patch('src.fetch_data.DataFetcher.update_session_token')
     @patch('src.fetch_data.DataFetcher.is_exportable')
     @patch('src.fetch_data.DataFetcher.send_data_to_sns')
     @patch('src.fetch_data.DataFetcher.send_delete_request')
@@ -253,6 +275,8 @@ class DataFetcherMethodTests(TestCase):
     @patch('src.fetch_data.DataFetcher.send_failure_message')
     @patch('src.fetch_data.DataFetcher.set_last_run_time')
     @patch('src.clients.ArchivesSpaceClient.__init__')
+    @patch('src.clients.ArchivesSpaceClient.log_out')
+    @patch('src.clients.ArchivesSpaceClient.get_session_token')
     @patch('src.clients.ArchivesSpaceClient.get_updated_identifiers')
     @patch('src.clients.ArchivesSpaceClient.get_deleted_identifiers')
     @patch('src.clients.ArchivesSpaceClient.resolve_identifiers')
@@ -269,6 +293,8 @@ class DataFetcherMethodTests(TestCase):
             mock_as_resolve,
             mock_as_get_deleted,
             mock_as_get_updated,
+            mock_as_session_token,
+            mock_as_log_out,
             mock_as_init,
             mock_set_last_run_time,
             mock_failure_message,
@@ -276,12 +302,14 @@ class DataFetcherMethodTests(TestCase):
             mock_delete_message,
             mock_data_to_sns,
             mock_is_exportable,
+            mock_update_session_token,
             mock_get_last_run_time,
             mock_set_is_running,
             mock_is_running):
         """Set up mocks"""
         fetched_obj = {"uri": "1234"}
         mock_as_init.return_value = None
+        mock_as_session_token.return_value = "secretsessiontoken"
         mock_as_get_deleted.return_value = [fetched_obj]
         mock_as_resolve.return_value = [fetched_obj]
         mock_cartographer_init.return_value = None
@@ -298,13 +326,18 @@ class DataFetcherMethodTests(TestCase):
         mock_set_is_running.assert_has_calls(
             [call(self.fetcher.object_status, self.fetcher.object_type), call(self.fetcher.object_status, self.fetcher.object_type, status=False)])
         mock_get_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type)
+        mock_update_session_token.assert_called_once_with("secretsessiontoken", self.fetcher.session_token_key)
         mock_is_exportable.assert_not_called()
         mock_data_to_sns.assert_not_called()
         mock_delete_message.assert_called_once_with(fetched_obj)
         mock_success_message.assert_called_once_with()
         mock_failure_message.assert_not_called()
         mock_set_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type, ANY)
-        mock_as_init.assert_called_once()
+        mock_as_init.assert_has_calls([
+            call(baseurl='https://as.rockarch.org/api', session_token='secretsessiontoken', repo='2'),
+            call(baseurl='https://as.rockarch.org/api', username='admin', password='admin', repo='2')])
+        mock_as_log_out.assert_called_once()
+        mock_as_session_token.assert_called_once()
         mock_as_get_updated.assert_not_called()
         mock_as_get_deleted.assert_called_once()
         mock_as_resolve.assert_not_called()
@@ -321,6 +354,8 @@ class DataFetcherMethodTests(TestCase):
         mock_failure_message.reset_mock()
         mock_set_last_run_time.reset_mock()
         mock_as_init.reset_mock()
+        mock_as_log_out.reset_mock()
+        mock_as_session_token.reset_mock()
         mock_as_get_deleted.reset_mock()
 
         """Fetching from Cartographer"""
@@ -336,6 +371,8 @@ class DataFetcherMethodTests(TestCase):
         mock_failure_message.assert_not_called()
         mock_set_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type, ANY)
         mock_as_init.assert_not_called()
+        mock_as_log_out.assert_not_called()
+        mock_as_session_token.assert_not_called()
         mock_as_get_updated.assert_not_called()
         mock_as_get_deleted.assert_not_called()
         mock_as_resolve.assert_not_called()
@@ -452,6 +489,10 @@ class DataFetcherMethodTests(TestCase):
                 'object_type': {
                     'Type': 'String',
                     'Value': self.fetcher.object_type,
+                },
+                'session_token_key': {
+                    'Type': 'String',
+                    'Value': self.fetcher.session_token_key
                 }})
 
     @mock_aws
@@ -480,6 +521,15 @@ class DataFetcherMethodTests(TestCase):
                     'Type': 'String',
                     'Value': self.fetcher.object_type,
                 }})
+
+    @mock_aws
+    def test_update_session_token(self):
+        session_token = "secretsessiontoken"
+        self.fetcher.update_session_token(session_token)
+        client = boto3.client('ssm', region_name='us-east-1')
+        response = client.get_parameter(
+            Name=f"/{self.fetcher.environment}/{self.fetcher.service_name}/{self.fetcher.session_token_key}")
+        self.assertEqual(response['Parameter']['Value'], session_token)
 
     @mock_aws
     def test_send_success_message(self):

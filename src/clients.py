@@ -8,12 +8,20 @@ class ArchivesSpaceClient(object):
     """Fetches updated and deleted data from ArchivesSpace."""
     page_size = 25
 
-    def __init__(self, baseurl, username, password, repo):
+    def __init__(self, baseurl=None, username=None, password=None, session_token=None, repo=None):
         self.client = ASpace(
             baseurl=baseurl,
             username=username,
-            password=password).client
+            password=password,
+            session_token=session_token
+        ).client
         self.repo = repo
+
+    def get_session_token(self):
+        return self.client.session.headers.get(self.client.config['session_header_name'])
+
+    def log_out(self):
+        return self.client.post('/logout').json()
 
     def get_updated_identifiers(self, object_type, last_run):
         params = {"all_ids": True, "modified_since": last_run}
