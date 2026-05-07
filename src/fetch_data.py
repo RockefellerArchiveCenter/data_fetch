@@ -304,6 +304,7 @@ class DataFetcher:
         """Sends an error message to an SNS topic."""
         client = self.get_client_with_role('sns', self.sns_role_arn)
         tb = ''.join(traceback.format_exception(exception)[:-1])
+        logging.info(tb)
         client.publish(
             TopicArn=self.sns_topic,
             MessageGroupId=f'{self.service_name}-{self.object_type}-{self.object_status}',
