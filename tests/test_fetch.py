@@ -196,7 +196,7 @@ class DataFetcherMethodTests(TestCase):
         mock_set_is_running.assert_has_calls(
             [call(self.fetcher.object_status, self.fetcher.object_type), call(self.fetcher.object_status, self.fetcher.object_type, status=False)])
         mock_get_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type)
-        mock_update_session_token.assert_called_once_with("secretsessiontoken", self.fetcher.session_token_key)
+        mock_update_session_token.assert_called_once_with("secretsessiontoken")
         mock_is_exportable.assert_called_once_with(fetched_obj)
         mock_data_to_sns.assert_called_once_with(fetched_obj)
         mock_delete_message.assert_not_called()
@@ -326,7 +326,7 @@ class DataFetcherMethodTests(TestCase):
         mock_set_is_running.assert_has_calls(
             [call(self.fetcher.object_status, self.fetcher.object_type), call(self.fetcher.object_status, self.fetcher.object_type, status=False)])
         mock_get_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type)
-        mock_update_session_token.assert_called_once_with("secretsessiontoken", self.fetcher.session_token_key)
+        mock_update_session_token.assert_called_once_with("secretsessiontoken")
         mock_is_exportable.assert_not_called()
         mock_data_to_sns.assert_not_called()
         mock_delete_message.assert_called_once_with(fetched_obj)

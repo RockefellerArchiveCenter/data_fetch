@@ -76,7 +76,7 @@ class DataFetcher:
                         username=self.config['AS_USERNAME'],
                         password=self.config['AS_PASSWORD'],
                         repo=self.config['AS_REPO'])
-                    self.update_session_token(client.get_session_token(), self.session_token_key)
+                    self.update_session_token(client.get_session_token())
 
                 else:
                     client = CartographerClient(
