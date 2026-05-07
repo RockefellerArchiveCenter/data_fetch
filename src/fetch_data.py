@@ -93,7 +93,7 @@ class DataFetcher:
                 else:
                     fetched_ids = client.get_deleted_identifiers(self.object_type, last_run)
                     for to_delete in fetched_ids:
-                        self.send_delete_request(to_delete)
+                        self.send_delete_request({"uri": to_delete})
                 self.send_success_message()
                 self.set_last_run_time(self.object_status, self.object_type, start_time)
             except Exception as e:
