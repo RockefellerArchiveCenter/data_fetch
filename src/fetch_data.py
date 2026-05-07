@@ -46,15 +46,16 @@ class DataFetcher:
         self.source_system = source_system
         self.object_status = object_status
         self.object_type = object_type
+        self.environment = environment
         if object_status not in VALID_OBJECT_STATUSES:
             raise Exception(f'Requested object status {object_status} is not one of {" ".join(VALID_OBJECT_STATUSES)}')
         if object_type not in VALID_OBJECT_TYPES:
             raise Exception(f'Requested object type {object_type} is not one of {" ".join(VALID_OBJECT_TYPES)}.')
-        self.config = self.get_config(environment)
+        self.config = self.get_config()
+        self.session_token_key = f"AS_SESSION_TOKEN_{object_type.upper()}_{object_status.upper()}"
 
     def fetch(self):
         """Main method, which calls all other methods."""
-        logging.info(f"Checking to see if fetch for {self.object_status} {self.object_type} is already running.")
         if not self.is_running(self.object_status, self.object_type):
             logging.info(f"Fetching {self.object_status} {self.object_type} from {self.source_system}.")
             try:
@@ -63,11 +64,20 @@ class DataFetcher:
                 last_run = self.get_last_run_time(self.object_status, self.object_type)
 
                 if self.source_system == 'archivesspace':
+                    if self.config.get(self.session_token_key):
+                        previous_client = ArchivesSpaceClient(
+                            baseurl=self.config['AS_BASEURL'],
+                            session_token=self.config[self.session_token_key],
+                            repo=self.config['AS_REPO'])
+                        previous_client.log_out()
+
                     client = ArchivesSpaceClient(
                         baseurl=self.config['AS_BASEURL'],
                         username=self.config['AS_USERNAME'],
                         password=self.config['AS_PASSWORD'],
                         repo=self.config['AS_REPO'])
+                    self.update_session_token(client.get_session_token(), self.session_token_key)
+
                 else:
                     client = CartographerClient(
                         baseurl=self.config['CARTOGRAPHER_BASEURL'],
@@ -91,6 +101,8 @@ class DataFetcher:
                 self.send_failure_message(e)
             self.set_is_running(self.object_status, self.object_type, status=False)
             logging.info(f"Fetch of {self.object_status} {self.object_type} is complete.")
+        else:
+            logging.info(f"Fetch for {self.object_status} {self.object_type} is already running.")
 
     def get_client_with_role(self, resource, role_arn):
         """Gets Boto3 client which authenticates with a specific IAM role."""
@@ -98,7 +110,7 @@ class DataFetcher:
         assumed_role_session = assume_role(session, role_arn)
         return assumed_role_session.client(resource)
 
-    def get_config(self, environment):
+    def get_config(self):
         """Fetch config values from Parameter Store.
 
         Args:
@@ -107,7 +119,7 @@ class DataFetcher:
         Returns:
             configuration (dict): all parameters found at the supplied path.
         """
-        ssm_parameter_path = f"/{environment}/data_fetch"
+        ssm_parameter_path = f"/{self.environment}/{self.service_name}"
         configuration = {}
         ssm_client = self.get_client_with_role('ssm', getenv('SSM_ROLE_ARN'))
         try:
@@ -124,6 +136,14 @@ class DataFetcher:
             traceback.print_exc()
         finally:
             return configuration
+
+    def update_session_token(self, session_token):
+        ssm_client = self.get_client_with_role('ssm', self.ssm_role_arn)
+        ssm_client.put_parameter(
+            Name=f"/{self.environment}/{self.service_name}/{self.session_token_key}",
+            Value=session_token,
+            Type="String",
+            Overwrite=True)
 
     def get_last_run_time(self, object_status, object_type):
         """Fetches last run time."""
@@ -213,6 +233,10 @@ class DataFetcher:
                 'object_type': {
                     'DataType': 'String',
                     'StringValue': self.object_type,
+                },
+                'session_token_key': {
+                    'DataType': 'String',
+                    'StringValue': self.session_token_key,
                 }
             })
 

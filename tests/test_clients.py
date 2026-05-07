@@ -28,6 +28,25 @@ class MockResponse(object):
 class ArchivesSpaceClientTests(TestCase):
 
     @patch('asnake.client.ASnakeClient.get')
+    def test_session_token_auth(self, mock_get):
+        mock_get.return_value = MockResponse({}, 200)
+        client = ArchivesSpaceClient("2", session_token="secretsessiontoken")
+        self.assertEqual(client.get_session_token(), "secretsessiontoken")
+
+    @patch('asnake.client.ASnakeClient.get')
+    @patch('asnake.client.ASnakeClient.post')
+    @patch('asnake.client.ASnakeClient.authorize')
+    def test_log_out(self, mock_authorize, mock_post, mock_get):
+        mock_get.return_value = MockResponse({}, 200)
+        client = ArchivesSpaceClient(
+            baseurl="https://as.rockarch.org/api",
+            username="admin",
+            password="admin",
+            repo="2")
+        client.log_out()
+        mock_post.assert_called_once_with("/logout")
+
+    @patch('asnake.client.ASnakeClient.get')
     @patch('asnake.client.ASnakeClient.authorize')
     def test_get_updated_identifiers(self, mock_authorize, mock_get):
         get_response = {"results": ["1", "2", "3"]}
