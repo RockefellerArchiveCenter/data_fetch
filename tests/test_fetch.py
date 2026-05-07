@@ -307,7 +307,7 @@ class DataFetcherMethodTests(TestCase):
             mock_set_is_running,
             mock_is_running):
         """Set up mocks"""
-        fetched_obj = {"uri": "1234"}
+        fetched_obj = "1234"
         mock_as_init.return_value = None
         mock_as_session_token.return_value = "secretsessiontoken"
         mock_as_get_deleted.return_value = [fetched_obj]
@@ -329,7 +329,7 @@ class DataFetcherMethodTests(TestCase):
         mock_update_session_token.assert_called_once_with("secretsessiontoken")
         mock_is_exportable.assert_not_called()
         mock_data_to_sns.assert_not_called()
-        mock_delete_message.assert_called_once_with(fetched_obj)
+        mock_delete_message.assert_called_once_with({"uri": fetched_obj})
         mock_success_message.assert_called_once_with()
         mock_failure_message.assert_not_called()
         mock_set_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type, ANY)
@@ -366,7 +366,7 @@ class DataFetcherMethodTests(TestCase):
         mock_get_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type)
         mock_is_exportable.assert_not_called()
         mock_data_to_sns.assert_not_called()
-        mock_delete_message.assert_called_once_with(fetched_obj)
+        mock_delete_message.assert_called_once_with({"uri": fetched_obj})
         mock_success_message.assert_called_once_with()
         mock_failure_message.assert_not_called()
         mock_set_last_run_time.assert_called_once_with(self.fetcher.object_status, self.fetcher.object_type, ANY)
