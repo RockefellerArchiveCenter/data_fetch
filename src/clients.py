@@ -1,7 +1,10 @@
 from asnake.aspace import ASpace
 from electronbonder.client import ElectronBond
+from requests.exceptions import ConnectTimeout
 
 from .helpers import list_chunks
+
+MAX_TIMEOUTS = 3
 
 
 class ArchivesSpaceClient(object):
@@ -9,13 +12,18 @@ class ArchivesSpaceClient(object):
     page_size = 25
 
     def __init__(self, baseurl=None, username=None, password=None, session_token=None, repo=None):
-        self.client = ASpace(
-            baseurl=baseurl,
-            username=username,
-            password=password,
-            session_token=session_token
-        ).client
-        self.repo = repo
+        for _ in range(MAX_TIMEOUTS):
+            try:
+                self.client = ASpace(
+                    baseurl=baseurl,
+                    username=username,
+                    password=password,
+                    session_token=session_token
+                ).client
+                self.repo = repo
+                break
+            except ConnectTimeout:
+                pass
 
     def get_session_token(self):
         return self.client.session.headers.get(self.client.config['session_header_name'])
