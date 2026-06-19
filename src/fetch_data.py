@@ -86,12 +86,13 @@ class DataFetcher:
                 if self.object_status == 'updated':
                     fetched_ids = client.get_updated_identifiers(self.object_type, last_run)
                     for obj in client.resolve_identifiers(fetched_ids, self.object_type):
+                        uri = obj.get('uri') if obj.get('uri') else obj.get('archivesspace_uri')
                         if self.is_exportable(obj):
                             self.send_data_to_sns(obj)
-                            logging.debug(f"Sent updated data to merger for {self.object_type} {obj}")
+                            logging.debug(f"Sent updated data to merger for {self.object_type} {uri}")
                         else:
                             self.send_delete_request(obj)
-                            logging.debug(f"Sent delete request for {self.object_type} {obj}")
+                            logging.debug(f"Sent delete request for {self.object_type} {uri}")
                 else:
                     fetched_ids = client.get_deleted_identifiers(self.object_type, last_run)
                     for to_delete in fetched_ids:
