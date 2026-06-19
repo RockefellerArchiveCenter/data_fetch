@@ -12,7 +12,7 @@ from .helpers import (ancestors_published, get_es_id, object_published,
                       valid_finding_aid_status, valid_id0)
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(getenv("LOGGING_LEVEL", logging.INFO))
 
 VALID_OBJECT_STATUSES = ['updated', 'deleted']
 VALID_OBJECT_TYPES = [
@@ -88,8 +88,10 @@ class DataFetcher:
                     for obj in client.resolve_identifiers(fetched_ids, self.object_type):
                         if self.is_exportable(obj):
                             self.send_data_to_sns(obj)
+                            logging.debug(f"Sent updated data to merger for {self.object_type} {obj}")
                         else:
                             self.send_delete_request(obj)
+                            logging.debug(f"Sent delete request for {self.object_type} {obj}")
                 else:
                     fetched_ids = client.get_deleted_identifiers(self.object_type, last_run)
                     for to_delete in fetched_ids:
