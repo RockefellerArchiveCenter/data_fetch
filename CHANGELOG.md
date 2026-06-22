@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.0...v1.0.1) (2026-06-22)
+
+
+### Bug Fixes
+
+* debug resource instances with no finding_aid_status field ([162085d](https://github.com/RockefellerArchiveCenter/data_fetch/commit/162085df173836b3956e43203edced97f5da91c8))
+* debugging resource instances with no finding_aid_status field ([3e6cfd5](https://github.com/RockefellerArchiveCenter/data_fetch/commit/3e6cfd52445347455bb58c2aab4b6f5bbe03b837))
+
 ## 1.0.0 (2026-06-18)
 
 
