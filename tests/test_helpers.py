@@ -35,7 +35,8 @@ def test_object_published():
 
 def test_valid_finding_aid_status():
     for obj, statuses, expected in [
-            ({}, [], True),
+            ({"jsonmodel_type": "resource"}, [], True),
+            ({"jsonmodel_type": "resource"}, ["restricted"], True),
             ({"jsonmodel_type": "agent"}, ["revised"], True),
             ({"jsonmodel_type": "resource", "finding_aid_status": "published"}, ["revised"], True),
             ({"jsonmodel_type": "resource", "finding_aid_status": "revised"}, ["revised"], False),

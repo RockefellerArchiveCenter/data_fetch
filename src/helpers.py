@@ -27,6 +27,8 @@ def ancestors_published(obj):
 
 
 def valid_id0(obj, valid_prefixes=[]):
+    if isinstance(valid_prefixes, str):
+        valid_prefixes = valid_prefixes.split(",")
     """Returns a boolean indicating whether the object's id_0 field is in a configured list."""
     if len(valid_prefixes):
         if obj.get("id_0") and not any(
@@ -40,9 +42,10 @@ def valid_finding_aid_status(obj, restricted_statuses=[]):
     Returns a boolean indicating whether the finding aid status for the object's
     resource is not in a list of configured restricted statuses.
     """
+    if isinstance(restricted_statuses, str):
+        restricted_statuses = restricted_statuses.split(",")
     if len(restricted_statuses) and obj.get("jsonmodel_type") in ["resource", "archival_object"]:
         resource = obj["ancestors"][-1]["_resolved"] if obj["jsonmodel_type"] == "archival_object" else obj
-        if not resource.get("finding_aid_status") or any(
-                [resource.get("finding_aid_status") == value for value in restricted_statuses]):
+        if any([resource.get("finding_aid_status") == value for value in restricted_statuses]):
             return False
     return True
