@@ -9,7 +9,7 @@ MAX_TIMEOUTS = 3
 
 class ArchivesSpaceClient(object):
     """Fetches updated and deleted data from ArchivesSpace."""
-    page_size = 15
+    page_size = 10
 
     def __init__(self, baseurl=None, username=None, password=None, session_token=None, repo=None):
         for _ in range(MAX_TIMEOUTS):
