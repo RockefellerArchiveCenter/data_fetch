@@ -63,22 +63,21 @@ class DataFetcher:
                 self.set_is_running(self.object_status, self.object_type)
                 last_run = self.get_last_run_time(self.object_status, self.object_type)
 
-                if self.source_system == 'archivesspace':
-                    if self.config.get(self.session_token_key):
-                        previous_client = ArchivesSpaceClient(
-                            baseurl=self.config['AS_BASEURL'],
-                            session_token=self.config[self.session_token_key],
-                            repo=self.config['AS_REPO'])
-                        previous_client.log_out()
-
-                    client = ArchivesSpaceClient(
+                if self.config.get(self.session_token_key):
+                    previous_client = ArchivesSpaceClient(
                         baseurl=self.config['AS_BASEURL'],
-                        username=self.config['AS_USERNAME'],
-                        password=self.config['AS_PASSWORD'],
+                        session_token=self.config[self.session_token_key],
                         repo=self.config['AS_REPO'])
-                    self.update_session_token(client.get_session_token())
+                    previous_client.log_out()
 
-                else:
+                client = ArchivesSpaceClient(
+                    baseurl=self.config['AS_BASEURL'],
+                    username=self.config['AS_USERNAME'],
+                    password=self.config['AS_PASSWORD'],
+                    repo=self.config['AS_REPO'])
+                self.update_session_token(client.get_session_token())
+
+                if self.source_system == 'cartographer':
                     client = CartographerClient(
                         baseurl=self.config['CARTOGRAPHER_BASEURL'],
                         health_check_path=self.config['CARTOGRAPHER_HEALTH_CHECK_PATH'])
