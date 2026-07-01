@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.4](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.3...v1.0.4) (2026-07-01)
+
+
+### Bug Fixes
+
+* decrease page size again ([950bdea](https://github.com/RockefellerArchiveCenter/data_fetch/commit/950bdea6e02e8c07e5c9b08f37f6a444a9dc6a94))
+* decrease page size even more ([66df8cd](https://github.com/RockefellerArchiveCenter/data_fetch/commit/66df8cd8bdcf293ccab3a4412bbe092bde37d8c7))
+
 ## [1.0.3](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.2...v1.0.3) (2026-07-01)
 
 
