@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.6](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.5...v1.0.6) (2026-09-08)
+
+
+### Bug Fixes
+
+* **deps:** Scheduled dependency updates ([7c28efb](https://github.com/RockefellerArchiveCenter/data_fetch/commit/7c28efb5f0518ceff5177217ac1d76370bd09be1))
+* **deps:** Scheduled dependency updates ([7c28efb](https://github.com/RockefellerArchiveCenter/data_fetch/commit/7c28efb5f0518ceff5177217ac1d76370bd09be1))
+* **deps:** Scheduled dependency updates ([6f2f51d](https://github.com/RockefellerArchiveCenter/data_fetch/commit/6f2f51dd21f38a9d3d5b401c8fae2e6371ecbda4))
+* **deps:** Scheduled dependency updates ([6f2f51d](https://github.com/RockefellerArchiveCenter/data_fetch/commit/6f2f51dd21f38a9d3d5b401c8fae2e6371ecbda4))
+* **deps:** Scheduled dependency updates ([77c9db7](https://github.com/RockefellerArchiveCenter/data_fetch/commit/77c9db7b2cc7f77489f0fccb774bef0137f6bb7c))
+
 ## [1.0.5](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.4...v1.0.5) (2026-08-07)
 
 
