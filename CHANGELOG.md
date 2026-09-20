@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.9](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.8...v1.0.9) (2026-09-20)
+
+
+### Bug Fixes
+
+* simplify logging message ([d6cbd7d](https://github.com/RockefellerArchiveCenter/data_fetch/commit/d6cbd7dbc2ffc60f0065dfd98673828f0408648c))
+* simplify logging so messages cn be sent ([abc9641](https://github.com/RockefellerArchiveCenter/data_fetch/commit/abc96413e6e460ae9b1602f50658d00854e0a5a1))
+
 ## [1.0.8](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.7...v1.0.8) (2026-09-20)
 
 
