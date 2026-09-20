@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.7](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.6...v1.0.7) (2026-09-20)
+
+
+### Bug Fixes
+
+* better logging to diagnose fetch errors ([c5d1d1d](https://github.com/RockefellerArchiveCenter/data_fetch/commit/c5d1d1d5249956eded8846cb293ad0e28b8846be))
+* improve logging of errors ([ad6817b](https://github.com/RockefellerArchiveCenter/data_fetch/commit/ad6817bb08372678f3802ffbf6e7a388615bc217))
+
 ## [1.0.6](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.5...v1.0.6) (2026-09-08)
 
 
