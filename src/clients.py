@@ -72,7 +72,7 @@ class ArchivesSpaceClient(object):
                 for obj in page:
                     yield obj
             else:
-                raise Exception(f"Error resolving data for {object_type} identifiers with params {params}: {resp.text}")
+                raise Exception(f"Error resolving data for {object_type} identifiers with params {params}: {resp.status_code}")
 
 
 class CartographerClient(object):
