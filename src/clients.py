@@ -66,9 +66,13 @@ class ArchivesSpaceClient(object):
             params = {
                 "id_set": id_list,
                 "resolve": ["ancestors", "ancestors::linked_agents", "instances::top_container", "instances::digital_object", "linked_agents", "subjects"]}
-            page = self.client.get(self.get_endpoint(object_type), params=params).json()
-            for obj in page:
-                yield obj
+            resp = self.client.get(self.get_endpoint(object_type), params=params)
+            if resp.status_code == 200:
+                page = resp.json()
+                for obj in page:
+                    yield obj
+            else:
+                raise Exception(f"Error resolving data for {object_type} identifiers with params {params}: {resp.text}")
 
 
 class CartographerClient(object):
