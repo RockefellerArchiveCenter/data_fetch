@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.11](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.10...v1.0.11) (2026-10-21)
+
+
+### Bug Fixes
+
+* update pip and deps ([dd407c5](https://github.com/RockefellerArchiveCenter/data_fetch/commit/dd407c5b1fe931e80c2463feff6ac20d7efddb75))
+* update pip and deps ([dd407c5](https://github.com/RockefellerArchiveCenter/data_fetch/commit/dd407c5b1fe931e80c2463feff6ac20d7efddb75))
+* update pip and deps ([3a76c8c](https://github.com/RockefellerArchiveCenter/data_fetch/commit/3a76c8c0a4e46f57942aeedf32fca0cba4e679ac))
+* update pip and deps ([3a76c8c](https://github.com/RockefellerArchiveCenter/data_fetch/commit/3a76c8c0a4e46f57942aeedf32fca0cba4e679ac))
+* update pip and deps ([9fa052b](https://github.com/RockefellerArchiveCenter/data_fetch/commit/9fa052b7adcd39d73ea855bc68fc4321b81d40b0))
+
 ## [1.0.10](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.9...v1.0.10) (2026-10-05)
 
 
