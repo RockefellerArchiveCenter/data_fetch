@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.13](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.12...v1.0.13) (2026-11-19)
+
+
+### Bug Fixes
+
+* update deploy ([9f4553f](https://github.com/RockefellerArchiveCenter/data_fetch/commit/9f4553fa2ea7869e60bac21c3dddb1947b8d31f5))
+* update deploy ([2d80e59](https://github.com/RockefellerArchiveCenter/data_fetch/commit/2d80e59ef67142e9ceb358b31e7d5ee6cc0e290c))
+* update deploy ([0485b0d](https://github.com/RockefellerArchiveCenter/data_fetch/commit/0485b0d832e2ce7495ee9c3100355b70515e0681))
+
 ## [1.0.12](https://github.com/RockefellerArchiveCenter/data_fetch/compare/v1.0.11...v1.0.12) (2026-11-02)
 
 
